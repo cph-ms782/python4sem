@@ -15,7 +15,7 @@ def write_list_to_file(output_file, list):
     """1B. can take a list of tuple and write each element to a new line in file"""
     # 1Ba udskift list med *list i parameter liste for at håndtere strings i stedet for en liste
     if output_file != None:
-        with open(output_file, 'w') as output:
+        with open(output_file, "a") as output:
             for el in list:
                 output.write(el + "\n")
     else:

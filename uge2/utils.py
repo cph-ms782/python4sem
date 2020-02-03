@@ -14,35 +14,25 @@ import os
 
 def write_filenames(path, output_file):
     # 1. first function takes a path to a folder and writes all filenames in the folder to a specified output file
-    onlyfiles = [f for f in listdir(path) if isfile(join(path, f))]
+    onlyfiles = [f for f in os.listdir(path) if isfile(join(path, f))]
     exercise1.write_list_to_file(output_file, onlyfiles)
 
 
 def write_all_filenames(path, output_file=""):
     # 2. second takes a path to a folder and write all filenames recursively(files of all sub folders to)
+    print("outputfile", output_file)
     allfiles = os.listdir(path)
     if len(allfiles) == 0:
         return
     else:
         for el in allfiles:
             if os.path.isfile(join(path, el)):
-                print(el)
+                print(list(el))
+                exercise1.write_list_to_file(output_file, list(el))
             else:
                 write_all_filenames(join(path, el))
 
         return
-
-
-# if __name__ == '__main__':
-#     parser = argparse.ArgumentParser(
-#         description='A program that downloads a URL and stores it locally')
-#     parser.add_argument('url', help='The URL to process')
-#     parser.add_argument('-d', '--destination',
-#                         help='The name of the file to store the url in')
-
-#     args = parser.parse_args()
-#     print('URL:', args.url)
-#     print('Destination:', args.destination)
 
 
 # write_filenames("./", "folderfiles.csv")
