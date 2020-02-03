@@ -20,20 +20,18 @@ def write_filenames(path, output_file):
 
 def write_all_filenames(path, output_file=""):
     # 2. second takes a path to a folder and write all filenames recursively(files of all sub folders to)
-    print("outputfile", output_file)
     allfiles = os.listdir(path)
     if len(allfiles) == 0:
         return
     else:
         for el in allfiles:
             if os.path.isfile(join(path, el)):
-                print(list(el))
-                exercise1.write_list_to_file(output_file, list(el))
+                exercise1.append_string_to_file(output_file, el)
             else:
-                write_all_filenames(join(path, el))
+                write_all_filenames(join(path, el), output_file)
 
         return
 
 
-# write_filenames("./", "folderfiles.csv")
-write_all_filenames("./", "folderfiles.csv")
+write_filenames("./", "folderfiles.csv")
+write_all_filenames("./", "folderfiles2.csv")

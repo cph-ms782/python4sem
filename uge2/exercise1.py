@@ -15,12 +15,20 @@ def write_list_to_file(output_file, list):
     """1B. can take a list of tuple and write each element to a new line in file"""
     # 1Ba udskift list med *list i parameter liste for at håndtere strings i stedet for en liste
     if output_file != None:
-        with open(output_file, "a") as output:
+        with open(output_file, "w") as output:
             for el in list:
                 output.write(el + "\n")
     else:
         for line in list:
             print(line)
+
+
+def append_string_to_file(output_file, string):
+    """1B. can take a list of tuple and write each element to a new line in file"""
+    # 1Ba udskift list med *list i parameter liste for at håndtere strings i stedet for en liste
+    if output_file != None:
+        with open(output_file, "a") as output:
+            output.write(string + "\n")
 
 
 def read_csv(input_file):
