@@ -15,6 +15,7 @@ import csv
 
 def write_filenames(path, output_file):
     # 1. first function takes a path to a folder and writes all filenames in the folder to a specified output file
+    print("write_filenames", path, output_file)
     onlyfiles = [f for f in os.listdir(path) if isfile(join(path, f))]
     exercise1.write_list_to_file(output_file, onlyfiles)
 
@@ -27,6 +28,8 @@ def write_all_filenames(path, output_file=""):
     else:
         for el in allfiles:
             if os.path.isfile(join(path, el)):
+                # istedet for at appende til file hver gang, kunne man også skrive til en liste som
+                # blev skrevet til en fil til sidst
                 exercise1.append_string_to_file(output_file, join(path, el))
             else:
                 write_all_filenames(join(path, el), output_file)
@@ -65,19 +68,19 @@ def write_headlines_to_file(filename_list, output_file):
 
 
 if __name__ == '__main__':
-    """ """
+    """Utils program to help with reading and writing files. Example usage: python utils.py --func wf  "./" "outputfile" """
     parser = argparse.ArgumentParser(
-        description='A program that will write the content from file to new file_name or otherwise will print it to the console. Example usage: python exercise1.py ./oldfile.csv --file newfile.csv')
-    # parser.add_argument('path', help='The path to file')
-    # parser.add_argument('--file',
-    #                     help='file_name that if given will write the content to file_name')
-    # 3 man kan ikke bruge --help da den brokker sig over den allerede er optaget
-    # parser.add_argument('--h',
-    #                     help='Help text in header')
+        description="Utils program to help with reading and writing files.")
+    parser.add_argument('--func',
+                        help='wf: write_filenames(path, output_file)')
+    parser.add_argument('path', help='The path to file')
+    parser.add_argument('outputfile', help='The outputfile')
 
     args = parser.parse_args()
-    file_input = args.path
-    filename = basename = os.path.basename(file_input)
+
+    #kun et argument er taget med til løsning af opgaven med at starte program fra CLI
+    if args.func =="wf":
+        write_filenames(args.path, args.outputfile)
 
 
 
