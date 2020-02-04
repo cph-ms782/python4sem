@@ -2,6 +2,7 @@ from os.path import isfile, join
 import argparse
 import exercise1
 import os
+import csv
 
 # Create a module called utils.py and put the following functions inside:
 
@@ -26,12 +27,57 @@ def write_all_filenames(path, output_file=""):
     else:
         for el in allfiles:
             if os.path.isfile(join(path, el)):
-                exercise1.append_string_to_file(output_file, el)
+                exercise1.append_string_to_file(output_file, join(path, el))
             else:
                 write_all_filenames(join(path, el), output_file)
 
         return
 
 
-write_filenames("./", "folderfiles.csv")
-write_all_filenames("./", "folderfiles2.csv")
+def print_first_line(filename_list):
+    # 3. third takes a list of filenames and print the first line of each
+    for file in filename_list:
+        filecontent = exercise1.read_csv(file)
+        print(filecontent[0])
+
+
+def print_email_lines(filename_list):
+    # 4. fourth takes a list of filenames and print each line that contains an email(just look for @)
+    for file in filename_list:
+        filecontent = exercise1.read_csv(file)
+        print(file)
+        for line in filecontent:
+            if line.find("@")>-1:
+                print(line)
+
+
+def write_headlines_to_file(filename_list, output_file):
+    # 5. fifth takes a list of md files and writes all headlines(lines starting with  # ) to a file
+    # Make sure your module can be called both from cli and imported to another module
+    # Create a new module that imports utils.py and test each function.
+    for file in filename_list:
+        filecontent = exercise1.read_csv(file)
+        print(file)
+        for line in filecontent:
+            if line.find("#")>-1:
+                print(line)
+                exercise1.append_string_to_file(output_file, line)
+
+
+if __name__ == '__main__':
+    """ """
+    parser = argparse.ArgumentParser(
+        description='A program that will write the content from file to new file_name or otherwise will print it to the console. Example usage: python exercise1.py ./oldfile.csv --file newfile.csv')
+    # parser.add_argument('path', help='The path to file')
+    # parser.add_argument('--file',
+    #                     help='file_name that if given will write the content to file_name')
+    # 3 man kan ikke bruge --help da den brokker sig over den allerede er optaget
+    # parser.add_argument('--h',
+    #                     help='Help text in header')
+
+    args = parser.parse_args()
+    file_input = args.path
+    filename = basename = os.path.basename(file_input)
+
+
+
