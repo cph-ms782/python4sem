@@ -22,6 +22,7 @@ class Student():
 
 
 class DataSheet():
+    """ DataSheet """
 
     def __init__(self, courses):
         """Initialize Datasheet with courses"""
@@ -43,5 +44,16 @@ class Course():
         self.optional_grade = optional_grade
 
 
-def generate_students(self):
-    pass
+def generate_students(n):
+    """ Generate n number of students """
+    import random
+
+    courses=["Dansk", "Engelsk", "Matematik"]
+
+    course = Course(random.sample(courses), "1.60", "Hans Jørgensen", 10)
+    data_sheet=DataSheet([course])
+    student = Student("Hans Hansen", "male", data_sheet, "1.jpg")
+    return student
+
+
+generate_students(1)
