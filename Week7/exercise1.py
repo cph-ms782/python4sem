@@ -3,6 +3,7 @@ import random
 from os.path import isfile, join
 import os
 import csv
+from statistics import mean
 
 
 class Student():
@@ -25,7 +26,9 @@ class Student():
 
     def get_avg_grade(self):
         """Student - get_avg_grade"""
-        pass
+        list_of_grades= self.data_sheet.get_grades_as_list()
+        mean_value = mean(list_of_grades)
+        return mean_value
 
 
 class DataSheet():
@@ -44,7 +47,10 @@ class DataSheet():
 
     def get_grades_as_list(self):
         """DataSheet - get_grades_as_list"""
-        pass
+        grades = []
+        for grade in self.courses:
+            grades.append(int(grade.optional_grade))
+        return grades
 
 
 class Course():
@@ -68,9 +74,9 @@ class Course():
 
 
 def generate_students(n):
-    """ Generate n number of students """
+    """ Generate n numbers of students """
 
-    names = ["Borneo", "Gentri", "Jethro"]
+    names = ["Borneo", "Gentri", "Jethro", "Morpheus"]
     teachers = ["Hans Jørgensen", "Jens Hansen", "Hans Jensen"]
     courses_list = ["Dansk", "Engelsk", "Matematik"]
     class_rooms = range(1, 20)
@@ -79,33 +85,85 @@ def generate_students(n):
     grades = [4, 7, 10, 12]
 
     students = []
-    courses = []
     for i in range(n):
+        # print("i", i)
+        # print("Students", students)
+        courses = []
+        courses.append(Course(random.choice(courses_list), random.choice(
+            class_rooms), random.choice(teachers), 10, random.choice(grades)))
+        courses.append(Course(random.choice(courses_list), random.choice(
+            class_rooms), random.choice(teachers), 10, random.choice(grades)))
         courses.append(Course(random.choice(courses_list), random.choice(
             class_rooms), random.choice(teachers), 10, random.choice(grades)))
         data_sheet = DataSheet(courses)
-        student = Student(random.choice(names)+"#"+str(i), random.choice(
+        student = Student(random.choice(names)+str(i+1), random.choice(
             gender), data_sheet, random.choice(urlLibs))
         students.append(student)
+
     return students
 
 
 def write_list_to_file(output_file, list):
     """can take a list of tuple and write each element to a new line in file"""
-    if output_file != None:
-        with open(output_file, "w") as output:
-            student_writer = csv.writer(
-                output, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-            student_writer.writerow(["stud_name", "course_name", "teacher", "ects", "classroom", "grade", "img_url"])
-            for el in list:
-                print("el", el)
-                for c in el.data_sheet.courses:
-                    student_writer.writerow([el.name, c.name, c.teacher, c.ETCS, c.classroom, c.optional_grade, el.image_url])
-    else:
-        for line in list:
-            print(line)
+
+    with open(output_file, "w") as output:
+        student_writer = csv.writer(
+            output, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+        student_writer.writerow(
+            ["stud_name", "course_name", "teacher", "ects", "classroom", "grade", "img_url"])
+        for el in list:
+            # print("el", el)
+            for c in el.data_sheet.courses:
+                student_writer.writerow(
+                    [el.name, c.name, c.teacher, c.ETCS, c.classroom, c.optional_grade, el.image_url])
 
 
-studs = generate_students(22)
-print(studs)
-write_list_to_file("students.csv", studs)
+def read_students_into_list():
+    with open("students.csv") as csv_file:
+        csv_reader = csv.reader(csv_file, delimiter=',')
+        line_count = 0
+        old_name = ""
+        courses = []
+        students = []
+        for row in csv_reader:
+            if line_count == 0:
+                line_count += 1
+            else:
+                stud_name = row[0]
+                course_name = row[1]
+                teacher = row[2]
+                ects = row[3]
+                classroom = row[4]
+                grade = row[5]
+                url_lib = row[6]
+                gender = ""
+                if stud_name != old_name:
+                    courses = []
+                    courses.append(Course(course_name, classroom, teacher, ects, grade))
+                else:
+                    courses.append(Course(course_name, classroom, teacher, ects, grade))
+
+                data_sheet = DataSheet(courses)
+                student = Student(stud_name, gender, data_sheet, url_lib)
+                students.append(student)
+
+                line_count +=   1
+
+        return students
+
+
+def exercise_1():
+    studs = generate_students(22)
+
+    # 7a
+    write_list_to_file("students.csv", studs)
+
+    # 8
+    # student_list = read_students_into_list()
+    student_list =read_students_into_list()
+    print(student_list)
+    for student in student_list:
+        print("Student {name}, Image: {img_url}, average grade: {av_grade}".format(name=student.name, img_url=student.image_url, av_grade=student.get_avg_grade()))
+
+
+exercise_1()
