@@ -9,8 +9,8 @@ class Student():
         self.image_url = image_url
 
     def __repr__(self):
-        return 'Student(%r, %r, %r)' % (self.name, self.gender,
-                                        self.data_sheet, self.image_url)
+        return 'Student(%r, %r, %r, %r)' % (self.name, self.gender,
+                                            self.data_sheet, self.image_url)
 
     def __str__(self):
         return '{name} is {gender} has {data_sheet} and looks like {image_url}.'.format(
@@ -28,9 +28,17 @@ class DataSheet():
         """Initialize Datasheet with courses"""
         self.courses = courses
 
+    def __repr__(self):
+        return 'DataSheet(%r)' % (self.courses)
+
+    def __str__(self):
+        return 'DataSheet: courses are {courses}'.format(
+            courses=self.courses)
+
     def get_grades_as_list(self):
         """DataSheet - get_grades_as_list"""
         pass
+
 
 class Course():
     """Course"""
@@ -43,17 +51,35 @@ class Course():
         self.ETCS = ETCS
         self.optional_grade = optional_grade
 
+    def __repr__(self):
+        return 'Course(%r, %r, %r, %r, %r)' % (self.name, self.classroom,
+                                               self.teacher, self.ETCS, self.optional_grade)
+
+    def __str__(self):
+        return '{name} is in {classroom} has {teacher} which gives {ETCS} and can give optionally {optional_grade}.'.format(
+            name=self.name, classroom=self.classroom, teacher=self.teacher, ETCS=self.ETCS, optional_grade=self.optional_grade)
+
 
 def generate_students(n):
     """ Generate n number of students """
     import random
 
-    courses=["Dansk", "Engelsk", "Matematik"]
+    names = ["Borneo", "Gentri", "Jethro"]
+    courses = ["Dansk", "Engelsk", "Matematik"]
+    class_rooms = range(1, 20)
+    urlLibs = ["1.jpg", "2.jpg", "3.jpg"]
+    gender = ["male", "female"]
+    grades = [4, 7, 10, 12]
 
-    course = Course(random.sample(courses), "1.60", "Hans Jørgensen", 10)
-    data_sheet=DataSheet([course])
-    student = Student("Hans Hansen", "male", data_sheet, "1.jpg")
-    return student
+    students = []
+    for i in range(n):
+        course = Course(random.choice(courses), random.choice(
+            class_rooms), random.choice(names), random.choice(grades))
+        data_sheet = DataSheet([course])
+        student = Student(random.choice(names)+"#"+str(i), random.choice(
+            gender), data_sheet, random.choice(urlLibs))
+        students.append(student)
+    return students
 
 
-generate_students(1)
+print(generate_students(2))
