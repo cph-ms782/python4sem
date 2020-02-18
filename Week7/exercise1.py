@@ -1,3 +1,10 @@
+
+import random
+from os.path import isfile, join
+import os
+import csv
+
+
 class Student():
     """A student Class"""
 
@@ -62,24 +69,43 @@ class Course():
 
 def generate_students(n):
     """ Generate n number of students """
-    import random
 
     names = ["Borneo", "Gentri", "Jethro"]
-    courses = ["Dansk", "Engelsk", "Matematik"]
+    teachers = ["Hans Jørgensen", "Jens Hansen", "Hans Jensen"]
+    courses_list = ["Dansk", "Engelsk", "Matematik"]
     class_rooms = range(1, 20)
     urlLibs = ["1.jpg", "2.jpg", "3.jpg"]
     gender = ["male", "female"]
     grades = [4, 7, 10, 12]
 
     students = []
+    courses = []
     for i in range(n):
-        course = Course(random.choice(courses), random.choice(
-            class_rooms), random.choice(names), random.choice(grades))
-        data_sheet = DataSheet([course])
+        courses.append(Course(random.choice(courses_list), random.choice(
+            class_rooms), random.choice(teachers), 10, random.choice(grades)))
+        data_sheet = DataSheet(courses)
         student = Student(random.choice(names)+"#"+str(i), random.choice(
             gender), data_sheet, random.choice(urlLibs))
         students.append(student)
     return students
 
 
-print(generate_students(2))
+def write_list_to_file(output_file, list):
+    """can take a list of tuple and write each element to a new line in file"""
+    if output_file != None:
+        with open(output_file, "w") as output:
+            student_writer = csv.writer(
+                output, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+            student_writer.writerow(["stud_name", "course_name", "teacher", "ects", "classroom", "grade", "img_url"])
+            for el in list:
+                print("el", el)
+                for c in el.data_sheet.courses:
+                    student_writer.writerow([el.name, c.name, c.teacher, c.ETCS, c.classroom, c.optional_grade, el.image_url])
+    else:
+        for line in list:
+            print(line)
+
+
+studs = generate_students(22)
+print(studs)
+write_list_to_file("students.csv", studs)
