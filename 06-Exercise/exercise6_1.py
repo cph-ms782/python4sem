@@ -113,9 +113,9 @@ class Exercise6_1:
 
         with ProcessPoolExecutor(workers) as ex:
             res = ex.map(self.avg_vowels, texts)
-        
-        result =  max(list(res))
-        return result
+        result = dict(zip([filename for filename in self.filenames], [avg for avg in list(res)]))
+        maxi = max(result, key=result.get) # finding key with max value
+        return maxi
 
 
 if __name__ == '__main__':
@@ -146,7 +146,7 @@ if __name__ == '__main__':
     # texts = [x for x in next(iter(filing))]
     # print(texts)
     try:
-        print("Highest average is ", filing.hardest_read(iter(filing)))
+        print("Highest average is in ", filing.hardest_read(iter(filing)))
     except OSError as ex:
         print(ex)
     # print(f)
