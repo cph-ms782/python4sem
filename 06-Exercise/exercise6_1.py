@@ -5,6 +5,8 @@
 import pandas as pd
 from requests import get  # to make GET request
 from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import ProcessPoolExecutor
+import multiprocessing
 import requests
 
 
@@ -16,7 +18,9 @@ class NotFoundException(ValueError):
 
 
 class Exercise6_1:
+    """download books"""
     # 1. init(self, url_list)
+
     def __init__(self, url_list):
         self.url_list = url_list
         self.filenames = []
@@ -31,16 +35,15 @@ class Exercise6_1:
         if self.index >= len(self.filenames):
             raise StopIteration
 
-        with open(self.filenames[self.index], "r") as file:
-            str=" "
+        with open(self.filenames[self.index], "r", encoding="utf8", errors='ignore') as file:
+            self.index += 1
+            str = ""
             return str.join(file.readlines())
 
-        self.index += 1
-
-    # 2. download(url, filename) raises NotFoundException when url returns 404
-    # What is NotFoundException ???
+    # 2. download(url, filename)
 
     def download(self, url, filename):
+        """download books and raises NotFoundException when url returns 404"""
         print("url", url)
         print("filename", filename)
         # open in binary mode
@@ -61,8 +64,9 @@ class Exercise6_1:
             except Exception as ex:
                 print(ex)
 
-    # 3. multi_download(url_list) uses threads to download multiple urls as text and stores filenames as a property
+    # 3. multi_download(url_list)
     def multi_download(self, url_list):
+        """uses threads to download multiple urls as text and stores filenames as a property"""
         workers = 4
         with ThreadPoolExecutor(workers) as ex:
             urls = [url_list[x] for x in range(len(url_list))]
@@ -70,28 +74,48 @@ class Exercise6_1:
             ex.map(self.download, urls, self.filenames)
         return self.filenames
 
-    # 6. filelist_generator(url_list) returns a generator to loop through the filenames
+    # 6. filelist_generator(url_list)
     def filelist_generator(self):
+        """returns a generator to loop through the filenames"""
         for filename in self.filenames:
             yield filename
 
-    # 7. avg_vowels(text) - a rough estimate on readability returns average number of vowels in the words of the text
+    # 7. avg_vowels(text)
     def avg_vowels(self, text):
-        text = text.replace("\n", "")
-        text = text.replace(",", "")
-        text = text.replace("'", "")
-        it = (map(text.lower().count, "aeiouyæøå"))
-        word_count = len(text.split(" "))
-        it_sum = 0
-        for x in it:
-            it_sum +=+x
-        if word_count==0:
-            return 0
-        return it_sum/word_count
+        """a rough estimate on readability returns average number of vowels in the words of the text"""
+        val = 0
+        if text:
+            text = text.replace("\n", "")
+            text = text.replace(",", "")
+            text = text.replace("'", "")
+            it = (map(text.lower().count, "aeiouyæøå"))
+            word_count = len(text.split(" "))
+            it_sum = 0
+            for x in it:
+                it_sum += +x
+            if word_count == 0:
+                return 0
+            val = round(it_sum/word_count, 2)
+        print("avg vowels returned", val)
+        return val
 
-    # 8. hardest_read() returns the filename of the text with the highest vowel score(use all the cpu cores on the computer for this work.
-    def hardest_read(self):
-        pass
+    # 8. hardest_read()
+    def hardest_read(self, it):
+        """ returns the filename of the text with the highest vowel score(use all the cpu cores on the computer for this work."""
+        workers = multiprocessing.cpu_count()
+        # highest_avg=0
+        texts = []
+        while True:
+            try:
+                texts.append(it.__next__())
+            except StopIteration:
+                break
+
+        with ProcessPoolExecutor(workers) as ex:
+            res = ex.map(self.avg_vowels, texts)
+        
+        result =  max(list(res))
+        return result
 
 
 if __name__ == '__main__':
@@ -115,11 +139,14 @@ if __name__ == '__main__':
     url2 = "https://www.gutenberg.org/files/1343/1343-0.txt"
     url3 = "https://www.gutenberg.org/files/1344/1344-0.txt"
 
-    url_list = [url]
-    # url_list = [url, url2, url3]
+    # url_list = [url]
+    url_list = [url, url2, url3]
     reslist = filing.multi_download(url_list)
-    print("list of filenames: ", reslist)
-    f =filing.__next__()
-    print(f)
-    print(filing.avg_vowels(f))
+    # print("list of filenames: ", reslist)
+    # texts = [x for x in next(iter(filing))]
+    # print(texts)
+    try:
+        print("Highest average is ", filing.hardest_read(iter(filing)))
+    except OSError as ex:
+        print(ex)
     # print(f)
