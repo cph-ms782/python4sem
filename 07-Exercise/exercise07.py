@@ -46,8 +46,7 @@ def team_ranking(url, team):
     return ranking
 
 def find_matches():
-    """ved hjælp af regex findes alle de steder der står
-    team-flex team-1 (uden et lost til sidst"""
+    """ved hjælp af regex findes alle de steder teamet der er gemt i team.txt har hhv vundet og tabt"""
     flames_file = open_file("team.txt")
     victory_pattern_obj = re.compile(r'(<div class="team-flex team-1\s">)')
     match_victories = victory_pattern_obj.findall(flames_file)
