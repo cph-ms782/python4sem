@@ -20,7 +20,6 @@ class NotFoundException(ValueError):
 class Exercise6_1:
     """download books"""
     # 1. init(self, url_list)
-
     def __init__(self, url_list):
         self.url_list = url_list
         self.filenames = []
